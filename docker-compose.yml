@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  apod:
+  bot:
     build: .
     volumes:
       - ./schedule.db:/usr/src/app/schedule.db
