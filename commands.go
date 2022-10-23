@@ -36,11 +36,6 @@ var commands = []*discordgo.ApplicationCommand{
 		Type:        discordgo.ChatApplicationCommand,
 	},
 	{
-		Name:        "vibecheck",
-		Description: "Vibe checks a random member",
-		Type:        discordgo.ChatApplicationCommand,
-	},
-	{
 		Name:        "source",
 		Description: "Link to the source code",
 		Type:        discordgo.ChatApplicationCommand,
@@ -94,13 +89,6 @@ var handlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate)
 
 		inspirobot.Stop(i.ChannelID)
 		sendMessage(s, i, "This channels scheduled quotes will no longer be sent.")
-	},
-	"vibecheck": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		err := inspirobot.vibeCheck(s, i, i.ChannelID)
-		if err != nil {
-			log.Println(err)
-			sendError(s, i, err)
-		}
 	},
 	"source": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		sendMessage(s, i, "https://github.com/Alextopher/inspiration-bot")
