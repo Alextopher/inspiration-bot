@@ -40,6 +40,11 @@ var commands = []*discordgo.ApplicationCommand{
 		Description: "Vibe checks a random member",
 		Type:        discordgo.ChatApplicationCommand,
 	},
+	{
+		Name:        "source",
+		Description: "Link to the source code",
+		Type:        discordgo.ChatApplicationCommand,
+	},
 }
 
 var handlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
@@ -96,6 +101,9 @@ var handlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate)
 			log.Println(err)
 			sendError(s, i, err)
 		}
+	},
+	"source": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		sendMessage(s, i, "https://github.com/Alextopher/inspiration-bot")
 	},
 }
 
