@@ -43,7 +43,7 @@ var commands = []*discordgo.ApplicationCommand{
 }
 
 var handlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
-	"post": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	"inspiration": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		link, err := getLink()
 		if err != nil {
 			sendError(s, i, fmt.Errorf("something went wrong ): "))
