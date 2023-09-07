@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Get a link to a inspirational image
+// Get a link to an inspirational image
 func getLink() (string, error) {
 	resp, err := http.Get("https://inspirobot.me/api?generate=true")
 	if err != nil {
