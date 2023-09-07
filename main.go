@@ -2,22 +2,14 @@ package main
 
 import (
 	"log"
-	"math/rand"
 	"os"
-	"time"
+	"os/signal"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	bolt "go.etcd.io/bbolt"
-)
-
-var (
-	inspirobot *Inspiration
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
 	log.Println("Starting bot...")
 	godotenv.Load()
 
@@ -29,32 +21,11 @@ func main() {
 		return
 	}
 
-	// open the bolt key value store
-	db, err := bolt.Open("./schedule.db", 0600, &bolt.Options{Timeout: time.Second})
-
-	if err != nil {
-		log.Println("Error opening bolt db: ", err)
-		return
-	}
-	defer db.Close()
-
-	// create the schedule bucket
-	db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("schedule"))
-		return nil
-	})
-
 	// Create a new Discord session using the provided bot token.
 	session, err := discordgo.New("Bot " + discordToken)
 	if err != nil {
 		log.Println("Error creating Discord session: ", err)
 		return
-	}
-
-	inspirobot = &Inspiration{
-		db:       db,
-		session:  session,
-		schedule: map[string]int{},
 	}
 
 	ch := make(chan struct{})
@@ -64,21 +35,6 @@ func main() {
 	})
 
 	session.Open()
-
-	// number of scheduled channels
-	scheduled := 0
-	inspirobot.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("schedule"))
-		c := b.Cursor()
-
-		for k, _ := c.First(); k != nil; k, _ = c.Next() {
-			scheduled++
-		}
-
-		return nil
-	})
-	log.Println("Schedule size: ", scheduled)
-
 	<-ch
 
 	// Handle application commands
@@ -96,5 +52,7 @@ func main() {
 	}
 
 	log.Println("Bot is running. Press CTRL-C to exit.")
-	inspirobot.RunScheduler()
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+	<-stop
 }
